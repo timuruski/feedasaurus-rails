@@ -1,0 +1,5 @@
+Problems to solve
+- redirects and protocol switches
+- truncating content
+- html values
+- atom vs. rss, handled by RSS support?
