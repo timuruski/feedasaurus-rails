@@ -7,7 +7,6 @@ FeedasaurusRails::Application.routes.draw do
       get :refresh
     end
   end
-  resources :items
+  resources :items, only: [:show]
 
-  
 end

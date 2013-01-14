@@ -23,12 +23,16 @@ class Refresher
 
   def create_entry(item_rss)
     feed.items.create do |item|
-      item.url = item_rss.source
-      item.title = item_rss.title.to_s
-      # item.author = item_rss.author
-      # item.body = item_rss.content
+      # raise item_rss.inspect
+
+      # item.url = 'http://example.com'
+      # item.title = 'Item name'
+      item.url = item_rss.link
+      item.title = item_rss.title
+      item.author = item_rss.author
+      itemcontentbody = item_rss.description
       item.fetched_at = Time.current
-      # item.published_at = Time.parse(item_rss.pub_date)
+      item.published_at = item_rss.pubDate
     end
   end
 

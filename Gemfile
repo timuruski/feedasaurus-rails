@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'nokogiri'
 gem 'patron'
 gem 'pg'
 gem 'rails', '3.2.9'
@@ -16,6 +17,6 @@ end
 group :development do
   gem 'awesome_print'
   gem 'better_errors'
+  gem 'binding_of_caller'
   gem 'foreman'
-  gem 'nokogiri'
 end
