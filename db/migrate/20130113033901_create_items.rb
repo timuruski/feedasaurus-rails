@@ -7,7 +7,9 @@ class CreateItems < ActiveRecord::Migration
       t.text :title
       t.text :author
       t.text :content
-      t.datetime :published_at
+      t.datetime :created_at # published
+      t.datetime :updated # updated
+      # t.datetime :published_at
       t.datetime :fetched_at
       t.datetime :read_at
       t.datetime :starred_at

@@ -9,7 +9,11 @@ Feed.find_each do |f|
 
   begin
     open(url) do |xml|
-      system('cp', xml.path, file_path)
+      case xml
+      when File then system('cp', xml.path, file_path)
+      when StringIO then File.write(file_path, xml.read)
+      end
+
       puts "Fetched #{file_path}"
     end
   rescue => e
