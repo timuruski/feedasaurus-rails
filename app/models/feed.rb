@@ -5,4 +5,8 @@ class Feed < ActiveRecord::Base
 
   belongs_to :group
   has_many :items
+
+  scope :search, lambda { |query| 
+    query = "%#{query.downcase}%"
+    where('lower(title) LIKE ?', query) }
 end

@@ -1,5 +1,5 @@
 <h1><%= @feed.title %></h1>
-<%= content_tag :p, link_to(feed_refresh_text(@feed), action: :refresh)  %>
+<p><%= link_to(feed_refresh_text(@feed), action: :refresh) %></p>
 
 <ul>
   <% @feed.items.each do |item| -%>
