@@ -34,6 +34,14 @@ namespace :feeds do
     Refresher.new(feed).refresh!
   end
 
+  desc "Refresh all feeds"
+  task :refresh_all do
+    Feed.find_each do |feed|
+      puts "Refreshing #{feed.title}..."
+      Refresher.new(feed).refresh!
+    end
+  end
+
   desc "Purge all feeds"
   task :purge do
     Feed.destroy_all
