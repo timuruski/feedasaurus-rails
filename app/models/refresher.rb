@@ -1,11 +1,9 @@
 require 'rss'
 
-class Refresher
-  def initialize(feed)
-    @feed = feed
+class Refresher < Struct.new(:feed)
+  def self.refresh!(feed)
+    new(feed).refresh!
   end
-
-  attr_reader :feed
 
   def refresh!
     feed.items.destroy_all
@@ -22,20 +20,12 @@ class Refresher
   end
 
   def create_item(item_rss)
-    return if item_exists?(item_rss)
+    item = ItemConverter.convert(item_rss)
+    return if item_exists?(item)
 
-    feed.items.create do |item|
-      # raise item_rss.inspect
-
-      # item.url = 'http://example.com'
-      # item.title = 'Item name'
-      item.url = item_rss.url
-      item.title = item_rss.title
-      item.author = item_rss.author
-      item.content = item_rss.content
-      item.fetched_at = Time.current
-      item.published_at = item_rss.published_at
-    end
+    item.feed = feed
+    item.fetched_at = Time.current
+    item.save
   end
 
   def item_exists?(item_rss)
@@ -43,7 +33,7 @@ class Refresher
   end
 
   def items
-    Fetcher.new(feed).fetch
+    @items ||= Fetcher.new(feed).fetch.items
   end
 
 end

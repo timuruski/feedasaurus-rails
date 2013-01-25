@@ -8,13 +8,6 @@ class ItemConverter < Struct.new(:item)
 
     converter_class.new(item).convert
   end
-
-  def convert_link(link)
-    link.respond_to?(:href) ? link.href : link.to_s
-  end
-
-  def try_content
-  end
 end
 
 class AtomItemConverter < ItemConverter
