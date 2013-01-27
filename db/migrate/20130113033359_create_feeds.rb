@@ -4,12 +4,20 @@ class CreateFeeds < ActiveRecord::Migration
       t.references :group
 
       t.string :title
-      t.string :feed_url
+      t.string :url
       t.string :site_url
       t.string :favicon
-      t.datetime :refreshed_at
+
+      t.string :username
+      t.string :password
 
       t.timestamps
+
+      # Refreshing 
+      t.datetime :refreshed_at
+      t.datetime :response_updated_at
+      t.string   :response_etag
+      t.string   :response_status
     end
   end
 end

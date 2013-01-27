@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'nokogiri'
+gem 'nokogiri', :require => false
 gem 'patron'
 gem 'pg'
 gem 'rails', '3.2.9'

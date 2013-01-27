@@ -16,12 +16,17 @@ ActiveRecord::Schema.define(:version => 20130113033901) do
   create_table "feeds", :force => true do |t|
     t.integer  "group_id"
     t.string   "title"
-    t.string   "feed_url"
+    t.string   "url"
     t.string   "site_url"
     t.string   "favicon"
+    t.string   "username"
+    t.string   "password"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.datetime "refreshed_at"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "response_updated_at"
+    t.string   "response_etag"
+    t.string   "response_status"
   end
 
   create_table "groups", :force => true do |t|
@@ -32,16 +37,15 @@ ActiveRecord::Schema.define(:version => 20130113033901) do
 
   create_table "items", :force => true do |t|
     t.integer  "feed_id"
-    t.string   "url",          :limit => 2048
+    t.string   "url",        :limit => 2048
     t.text     "title"
     t.text     "author"
     t.text     "content"
-    t.datetime "published_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.datetime "fetched_at"
     t.datetime "read_at"
     t.datetime "starred_at"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
   end
 
 end

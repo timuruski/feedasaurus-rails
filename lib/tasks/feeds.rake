@@ -7,23 +7,23 @@ end
 namespace :feeds do
 
   desc "Import feeds from OPML"
-  task :import, :opml do |t, args|
-    opml = File.read(args[:opml])
-    xml = Nokogiri.parse(opml)
-    xml.xpath("//outline[@type='rss']")
-      .map { |e| { url: e['xmlUrl'], title: e['title'] } }
-      .reject { |fx| Feed.where(feed_url: fx[:url]).exists? }
-      .each do |fx|
-        Feed.create do |f|
-          f.title = fx[:title]
-          f.feed_url = fx[:url]
-        end
-      end
+  task :import, :file do |t, args|
+    file = File.open(args[:file], 'r')
+    Importer.import(file) do |f|
+      puts %Q{Importing "#{f.title}"}
+    end
   end
 
   desc "List all feeds"
   task :list do
     Feed.find_each do |f|
+      puts "#{f.id}: #{f.title} - #{f.refreshed_at? ? f.refreshed_at.strftime('%c') : 'Never'}"
+    end
+  end
+
+  desc "Search for a feed by title"
+  task :search, :query do |t, args|
+    Feed.search(args[:query]).find_each do |f|
       puts "#{f.id}: #{f.title} - #{f.refreshed_at? ? f.refreshed_at.strftime('%c') : 'Never'}"
     end
   end
@@ -39,6 +39,19 @@ namespace :feeds do
     Feed.find_each do |feed|
       puts "Refreshing #{feed.title}..."
       Refresher.new(feed).refresh!
+    end
+  end
+
+  desc "Reset a feed"
+  task :reset, :feed_id do |t, args|
+    feed = Feed.find(args[:feed_id])
+    feed.reset!
+  end
+
+  desc "Reset all feeds"
+  task :reset_all do
+    Feed.find_each do |feed|
+      feed.reset!
     end
   end
 
