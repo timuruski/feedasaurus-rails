@@ -9,10 +9,12 @@ class FeedFetcher < Struct.new(:feed)
   def fetch
     begin
       RSS::Parser.parse(xml)
-    rescue
-      nil
+    rescue => e
+      raise e
     end
   end
+
+  protected
 
   def xml
     begin

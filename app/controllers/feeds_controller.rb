@@ -9,7 +9,8 @@ class FeedsController < ApplicationController
 
   def refresh
     @feed = Feed.find(params[:id])
-    FeedRefresher.refresh(@feed)
+    @feed.update_attribute(:refresh_started_at, Time.current)
+    QC.enqueue('Feed.refresh', params[:id])
 
     redirect_to @feed
   end

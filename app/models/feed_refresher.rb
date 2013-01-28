@@ -1,18 +1,15 @@
 require 'rss'
-require 'fetcher'
+require 'feed_fetcher'
 require 'item_builder'
 
 class FeedRefresher < Struct.new(:feed)
   def self.refresh(feed)
-    new(feed).refresh!
+    new(feed).refresh
   end
 
-  def refresh!
-    feed.items.destroy_all
-    refresh
-  end
-
+  # TODO Move the bits about timestamps out of here.
   def refresh
+    # update_attribute(:refresh_started_at, Time.current)
     items.each do |item_rss|
       create_item(item_rss)
     end
@@ -35,7 +32,7 @@ class FeedRefresher < Struct.new(:feed)
   end
 
   def items
-    @items ||= FeedFetcher.new(feed).fetch.items
+    @items ||= FeedFetcher.fetch(feed).items
   end
 
 end

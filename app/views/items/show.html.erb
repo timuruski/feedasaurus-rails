@@ -1,2 +1,5 @@
 <h1><%= @item.title %></h1>
-<p>Published: <%= link_to @item.published_at, @item.url %></p>
+<p>Published: <%= link_to @item.created_at, @item.url %></p>
+<div id="content">
+  <%= @item.content %>
+</div>

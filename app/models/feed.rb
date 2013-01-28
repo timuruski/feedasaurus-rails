@@ -1,9 +1,18 @@
 class Feed < ActiveRecord::Base
+  # Attributes and validations
   validates :title,
-    presence: true
+    allow_blank: false
+  validates :url,
+    allow_blank: false
+  validates :site_url,
+    allow_blank: true
+  validates :favicon,
+    allow_blank: true
+  # validates :username
+  # validates :password
 
-  attr_accessible :favicon, :feed_url, :refreshed_at, :site_url, :title
 
+  # Associations
   belongs_to :group
   has_many :items
 
@@ -12,7 +21,27 @@ class Feed < ActiveRecord::Base
     query = "%#{query.downcase}%"
     where('lower(title) LIKE ?', query) }
 
-  #
+  # TODO Use the Feed#refresh method instead.
+  def self.refresh(id)
+    feed = find(id)
+    FeedRefresher.refresh(feed)
+  end
+
+  # Returns whether a refresh is in progress.
+  def refreshing?
+    return false if refresh_started_at.nil?
+    return true if refreshed_at.nil?
+
+    refresh_started_at > refreshed_at
+  end
+
+  # NOTE Not in use yet.
+  def refresh
+    update_attribute(:refresh_started_at, Time.current)
+    FeedRefresher.refresh(self)
+    feed.update_attribute(:refreshed_at, Time.current)
+  end
+
   # Resets a feed so that it has not been updated.
   def reset
     items.destroy_all
