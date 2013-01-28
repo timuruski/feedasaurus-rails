@@ -9,7 +9,7 @@ namespace :feeds do
   desc "Import feeds from OPML"
   task :import, :file do |t, args|
     file = File.open(args[:file], 'r')
-    Importer.import(file) do |f|
+    FeedImporter.import(file) do |f|
       puts %Q{Importing "#{f.title}"}
     end
   end
@@ -31,14 +31,14 @@ namespace :feeds do
   desc "Refresh the items in a feed"
   task :refresh, :feed_id do |t, args|
     feed = Feed.find(args[:feed_id])
-    Refresher.refresh(feed)
+    FeedRefresher.refresh(feed)
   end
 
   desc "Refresh all feeds"
   task :refresh_all do
     Feed.find_each do |feed|
       puts "Refreshing #{feed.title}..."
-      Refresher.refresh(feed)
+      FeedRefresher.refresh(feed)
     end
   end
 

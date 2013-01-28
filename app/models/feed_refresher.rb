@@ -2,7 +2,7 @@ require 'rss'
 require 'fetcher'
 require 'item_builder'
 
-class Refresher < Struct.new(:feed)
+class FeedRefresher < Struct.new(:feed)
   def self.refresh(feed)
     new(feed).refresh!
   end
@@ -35,7 +35,7 @@ class Refresher < Struct.new(:feed)
   end
 
   def items
-    @items ||= Fetcher.new(feed).fetch.items
+    @items ||= FeedFetcher.new(feed).fetch.items
   end
 
 end

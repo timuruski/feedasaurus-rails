@@ -1,7 +1,7 @@
 require 'rss'
 require 'patron'
 
-class Fetcher < Struct.new(:feed)
+class FeedFetcher < Struct.new(:feed)
   def self.fetch(feed)
     new(feed).fetch
   end
@@ -16,7 +16,6 @@ class Fetcher < Struct.new(:feed)
 
   def xml
     begin
-      # open(feed.url)
       # Need to store some of the response information to be a good
       # network citizen.
       response = session.get(url.path)

@@ -1,6 +1,6 @@
 require 'nokogiri'
 
-class Importer < Struct.new(:file)
+class FeedImporter < Struct.new(:file)
   def self.import(file, &block)
     new(file).import(&block)
   end
