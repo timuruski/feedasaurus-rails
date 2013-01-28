@@ -31,27 +31,27 @@ namespace :feeds do
   desc "Refresh the items in a feed"
   task :refresh, :feed_id do |t, args|
     feed = Feed.find(args[:feed_id])
-    Refresher.new(feed).refresh!
+    Refresher.refresh(feed)
   end
 
   desc "Refresh all feeds"
   task :refresh_all do
     Feed.find_each do |feed|
       puts "Refreshing #{feed.title}..."
-      Refresher.new(feed).refresh!
+      Refresher.refresh(feed)
     end
   end
 
   desc "Reset a feed"
   task :reset, :feed_id do |t, args|
     feed = Feed.find(args[:feed_id])
-    feed.reset!
+    feed.reset
   end
 
   desc "Reset all feeds"
   task :reset_all do
     Feed.find_each do |feed|
-      feed.reset!
+      feed.reset
     end
   end
 

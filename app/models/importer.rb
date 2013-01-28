@@ -1,11 +1,11 @@
 require 'nokogiri'
 
 class Importer < Struct.new(:file)
-  def self.import(file)
-    new(file).import
+  def self.import(file, &block)
+    new(file).import(&block)
   end
 
-  def import
+  def import(&block)
     feeds.each do |feed|
       next if Feed.where(url: feed.url).exists?
 

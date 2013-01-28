@@ -16,7 +16,7 @@ class Fetcher < Struct.new(:feed)
 
   def xml
     begin
-      # open(feed.feed_url)
+      # open(feed.url)
       # Need to store some of the response information to be a good
       # network citizen.
       response = session.get(url.path)
@@ -27,7 +27,7 @@ class Fetcher < Struct.new(:feed)
   end
 
   def url
-    @url ||= URI.parse(feed.feed_url)
+    @url ||= URI.parse(feed.url)
   end
 
   def session

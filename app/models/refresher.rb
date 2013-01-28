@@ -1,7 +1,9 @@
 require 'rss'
+require 'fetcher'
+require 'item_builder'
 
 class Refresher < Struct.new(:feed)
-  def self.refresh!(feed)
+  def self.refresh(feed)
     new(feed).refresh!
   end
 
@@ -20,7 +22,7 @@ class Refresher < Struct.new(:feed)
   end
 
   def create_item(item_rss)
-    item = ItemConverter.convert(item_rss)
+    item = ItemBuilder.build(item_rss)
     return if item_exists?(item)
 
     item.feed = feed

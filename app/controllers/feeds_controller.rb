@@ -9,7 +9,7 @@ class FeedsController < ApplicationController
 
   def refresh
     @feed = Feed.find(params[:id])
-    Refresher.new(@feed).refresh!
+    Refresher.refresh(@feed)
 
     redirect_to @feed
   end

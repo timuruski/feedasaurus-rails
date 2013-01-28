@@ -14,7 +14,7 @@ class Feed < ActiveRecord::Base
 
   #
   # Resets a feed so that it has not been updated.
-  def reset!
+  def reset
     items.destroy_all
     update_attributes(refreshed_at: nil)
   end
