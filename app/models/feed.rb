@@ -1,13 +1,13 @@
 class Feed < ActiveRecord::Base
   # Attributes and validations
   validates :title,
-    allow_blank: false
+    optional: true
   validates :url,
-    allow_blank: false
+    presence: false
   validates :site_url,
-    allow_blank: true
+    optional: true
   validates :favicon,
-    allow_blank: true
+    optional: true
   # validates :username
   # validates :password
 
