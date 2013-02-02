@@ -1,10 +1,14 @@
 require_relative '../../config/environment'
 
-task :loadpath do
-  puts $:
-end
-
 namespace :feeds do
+
+  desc "Start worker to periodically refresh feeds"
+  task :worker do
+    trap('INT') { exit }
+    trap('TERM') { @worker.stop }
+    @worker = Worker.new
+    @worker.start
+  end
 
   desc "Import feeds from OPML"
   task :import, :file do |t, args|
