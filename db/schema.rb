@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130113033901) do
+ActiveRecord::Schema.define(:version => 20130202232838) do
 
   create_table "feeds", :force => true do |t|
     t.integer  "group_id"
@@ -21,12 +21,15 @@ ActiveRecord::Schema.define(:version => 20130113033901) do
     t.string   "favicon"
     t.string   "username"
     t.string   "password"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
-    t.datetime "refreshed_at"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.datetime "last_refreshed_at"
     t.datetime "response_updated_at"
     t.string   "response_etag"
     t.string   "response_status"
+    t.datetime "refresh_started_at"
+    t.datetime "next_refresh_at"
+    t.integer  "refresh_every",       :default => 14400
   end
 
   create_table "groups", :force => true do |t|

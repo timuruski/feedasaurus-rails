@@ -1,5 +1,10 @@
 <h1><%= @feed.title %></h1>
-<% if @feed.refreshing? -%>
+<ul>
+  <li>Last refreshed: <%= @feed.last_refreshed_at %></li>
+  <li>Next refresh: <%= @feed.next_refresh_at %></li>
+  <li>Refresh started: <%= @feed.refresh_started_at %></li>
+</ul>
+<% if @feed.refresh_scheduled? -%>
   <p>Refreshing...</p>
 <% else -%>
   <p><%= link_to(feed_refresh_text(@feed), action: :refresh) %></p>

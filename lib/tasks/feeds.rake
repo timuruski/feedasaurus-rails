@@ -21,28 +21,28 @@ namespace :feeds do
   desc "List all feeds"
   task :list do
     Feed.find_each do |f|
-      puts "#{f.id}: #{f.title} - #{f.refreshed_at? ? f.refreshed_at.strftime('%c') : 'Never'}"
+      puts "#{f.id}: #{f.title} - #{f.last_refreshed_at? ? f.last_refreshed_at.strftime('%c') : 'Never'}"
     end
   end
 
   desc "Search for a feed by title"
   task :search, :query do |t, args|
     Feed.search(args[:query]).find_each do |f|
-      puts "#{f.id}: #{f.title} - #{f.refreshed_at? ? f.refreshed_at.strftime('%c') : 'Never'}"
+      puts "#{f.id}: #{f.title} - #{f.last_refreshed_at? ? f.last_refreshed_at.strftime('%c') : 'Never'}"
     end
   end
 
   desc "Refresh the items in a feed"
   task :refresh, :feed_id do |t, args|
     feed = Feed.find(args[:feed_id])
-    FeedRefresher.refresh(feed)
+    feed.refresh!
   end
 
   desc "Refresh all feeds"
   task :refresh_all do
     Feed.find_each do |feed|
       puts "Refreshing #{feed.title}..."
-      FeedRefresher.refresh(feed)
+      feed.refresh!
     end
   end
 

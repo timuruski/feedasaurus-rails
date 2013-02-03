@@ -1,7 +1,7 @@
 module FeedsHelper
   def feed_refresh_text(feed)
-    return 'Never refreshed' unless feed.refreshed_at?
+    return 'Never refreshed' unless feed.last_refreshed_at?
 
-    "Refreshed #{time_ago_in_words(feed.refreshed_at)} ago"
+    "Refreshed #{time_ago_in_words(feed.last_refreshed_at)} ago"
   end
 end

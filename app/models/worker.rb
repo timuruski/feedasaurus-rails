@@ -5,13 +5,23 @@ class Worker
 
   def start
     while @running
-      feed_count = Feed.count
-      puts "Found #{feed_count} #{'feed'.pluralize(feed_count)}"
-      sleep 15
+      work
+      wait
     end
   end
 
   def stop
     @running = false
+  end
+
+  def work
+    feed = Feed.refreshable.first
+    return if feed.nil?
+
+    feed.refresh!
+  end
+
+  def wait
+    sleep 15
   end
 end

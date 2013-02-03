@@ -9,12 +9,10 @@ class FeedRefresher < Struct.new(:feed)
 
   # TODO Move the bits about timestamps out of here.
   def refresh
-    # update_attribute(:refresh_started_at, Time.current)
     items.each do |item_rss|
       create_item(item_rss)
     end
 
-    feed.update_attribute(:refreshed_at, Time.current)
     feed
   end
 
