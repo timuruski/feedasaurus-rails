@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gem 'nokogiri', :require => false
 gem 'patron'
 gem 'pg'
-gem 'queue_classic', '~> 2.1'
 gem 'rails', '3.2.11'
 gem 'simple_form', '~> 2.0.4'
 gem 'thin', '~> 1.5.0'

@@ -5,10 +5,3 @@
 require File.expand_path('../config/application', __FILE__)
 
 FeedasaurusRails::Application.load_tasks
-
-
-# QueueClassic
-require 'queue_classic'
-require 'queue_classic/tasks'
-
-QC::Conn.connection = ActiveRecord::Base.connection.raw_connection
