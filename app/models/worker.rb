@@ -1,7 +1,10 @@
 class Worker
-  def initialize
+  def initialize(out = nil)
     @running = true
+    @out = out || STDOUT
   end
+
+  attr_reader :out
 
   def start
     while @running
@@ -18,7 +21,9 @@ class Worker
     feed = Feed.refreshable.first
     return if feed.nil?
 
+    out.puts %Q(Refreshing feed #{feed.id} "#{feed.title}")
     feed.refresh!
+    out.puts "  Finished"
   end
 
   def wait

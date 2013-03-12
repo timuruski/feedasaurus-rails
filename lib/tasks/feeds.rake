@@ -4,10 +4,14 @@ namespace :feeds do
 
   desc "Start worker to periodically refresh feeds"
   task :worker do
+    worker_out = STDOUT
+    worker_out.sync = true
+
+    worker = Worker.new(worker_out)
+    trap('TERM') { worker.stop }
     trap('INT') { exit }
-    trap('TERM') { @worker.stop }
-    @worker = Worker.new
-    @worker.start
+
+    worker.start
   end
 
   desc "Import feeds from OPML"
