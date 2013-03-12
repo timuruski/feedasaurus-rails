@@ -15,3 +15,10 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+
+# Ignore Vagrant stuff
+/.vagrant
+
+# Ignore .rbenv stuff
+/.rbenv-gemsets
+/.rbenv-vars
