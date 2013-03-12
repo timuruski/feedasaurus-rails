@@ -11,7 +11,6 @@ class Feed < ActiveRecord::Base
   # validates :username
   # validates :password
 
-
   # Associations
   belongs_to :group
   has_many :items
@@ -23,9 +22,13 @@ class Feed < ActiveRecord::Base
     query = "%#{query.downcase}%"
     where('title ILIKE ?', query) }
 
+  scope :enabled, where(:enabled => true)
+  scope :disabled, where(:enabled => false)
+
   # Returns a list of feeds to be refreshed.
   scope :refreshable, lambda {
     where('next_refresh_at <= ?', Time.current)
+      .enabled
       .order('next_refresh_at ASC') }
 
   # TODO Use the Feed#refresh method instead.
@@ -83,6 +86,20 @@ class Feed < ActiveRecord::Base
     last_refreshed_at = nil
     next_refresh_at = nil
 
+    save
+  end
+
+  # Stops a feed from being automatically refreshed.
+  def disable
+    self.enabled = false
+    self.next_refresh_at = nil
+    save
+  end
+
+  # Resumes a feed being refreshed.
+  def enable
+    self.enabled = true
+    self.next_refresh_at = Time.current
     save
   end
 end

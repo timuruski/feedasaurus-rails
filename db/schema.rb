@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130202232838) do
+ActiveRecord::Schema.define(:version => 20130312035024) do
 
   create_table "feeds", :force => true do |t|
     t.integer  "group_id"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20130202232838) do
     t.datetime "refresh_started_at"
     t.datetime "next_refresh_at"
     t.integer  "refresh_every",       :default => 14400
+    t.boolean  "enabled",             :default => true
   end
 
   create_table "groups", :force => true do |t|
