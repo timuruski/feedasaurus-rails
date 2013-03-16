@@ -7,6 +7,7 @@ class Worker
   attr_reader :out
 
   def start
+    out.puts "Worker started"
     while @running
       work
       wait
@@ -14,6 +15,7 @@ class Worker
   end
 
   def stop
+    out.puts "Worker stopped"
     @running = false
   end
 
@@ -23,7 +25,7 @@ class Worker
 
     out.puts %Q(Refreshing feed #{feed.id} "#{feed.title}")
     feed.refresh!
-    out.puts "  Finished"
+    out.puts "  Done"
   end
 
   def wait

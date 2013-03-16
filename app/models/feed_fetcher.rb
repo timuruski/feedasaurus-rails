@@ -8,6 +8,7 @@ class FeedFetcher < Struct.new(:feed)
 
   def fetch
     begin
+      xml = request_xml
       RSS::Parser.parse(xml)
     rescue => e
       raise e
@@ -16,7 +17,7 @@ class FeedFetcher < Struct.new(:feed)
 
   protected
 
-  def xml
+  def request_xml
     begin
       # Need to store some of the response information to be a good
       # network citizen.
