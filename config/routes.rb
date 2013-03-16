@@ -9,4 +9,6 @@ FeedasaurusRails::Application.routes.draw do
   end
   resources :items, only: [:show]
 
+  mount FeverAPI => '/api/fever'
+
 end

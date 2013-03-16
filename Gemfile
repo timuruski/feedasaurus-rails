@@ -5,6 +5,7 @@ gem 'patron'
 gem 'pg'
 gem 'rails', '3.2.11'
 gem 'simple_form', '~> 2.0.4'
+gem 'sinatra', '~> 1.3.5'
 gem 'thin', '~> 1.5.0'
 
 gem 'jquery-rails'
