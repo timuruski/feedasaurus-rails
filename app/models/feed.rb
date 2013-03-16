@@ -42,6 +42,13 @@ class Feed < ActiveRecord::Base
     update_all(refresh_at: Time.current)
   end
 
+  # Returns the timestamp of the most recently refreshed feed.
+  def self.last_refreshed_at
+    where('last_refreshed_at IS NOT NULL')
+      .order('last_refreshed_at DESC')
+      .first.last_refreshed_at
+  end
+
   # Returns whether a refresh is in progress.
   # This seems wrong.
   def needs_refresh?
