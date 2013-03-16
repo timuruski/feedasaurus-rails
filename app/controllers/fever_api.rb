@@ -14,7 +14,6 @@ class FeverAPI < Sinatra::Base
     end
   end
 
-
   configure do
     mime_type :json, 'text/json'
     enable :logging
@@ -29,29 +28,35 @@ class FeverAPI < Sinatra::Base
     # Handle XML data type ?api=xml
   end
 
+  # Sugar for building routes
+  def self.api_call(name, &block)
+    post('/', action: name, &block)
+  end
+
 
   # Groups
-  post '/', action: :groups do
-    groups = []
+  api_call :groups do
+    groups = Group.all.map { |g|
+      { id: g.id, title: g.name } }
     json_response groups: groups,
                   feeds_groups: feeds_groups
   end
 
   # Feeds
-  post '/', action: :feeds do
+  api_call :feeds do
     feeds = []
     json_response feeds: feeds,
                   feeds_groups: feeds_groups
   end
 
   # Favicons
-  post '/', action: :favicons do
+  api_call :favicons do
     favicons = []
     json_response favicons: favicons
   end
 
   # Items
-  post '/', action: :items do
+  api_call :items do
     items = []
     total_items = 0
 
@@ -60,26 +65,25 @@ class FeverAPI < Sinatra::Base
   end
 
   # Hot Links
-  post '/', action: :links do
+  api_call :links do
     links = []
     json_response links: links
   end
 
   # Sync unread items
-  post '/', action: :unread_item_ids do
+  api_call :unread_item_ids do
     unread_item_ids = ''
     json_response unread_item_ids: unread_item_ids
   end
 
   # Sync saved items
-  post '/', action: :saved_item_ids do
+  api_call :saved_item_ids do
     saved_item_ids = ''
     json_response saved_item_ids: saved_item_ids
   end
 
   # Authenticate/handshake
-  post '/', action: :none do
-    logger.info "UH OH"
+  api_call :none do
     json_response
   end
 
@@ -88,7 +92,9 @@ class FeverAPI < Sinatra::Base
 
 
   def feeds_groups
-    []
+    Group.all.map { |g|
+      feed_ids = Feed.where(:group_id => g.id).pluck(:id).join(',')
+      { group_id: g.id, feed_ids: feed_ids } }
   end
 
   # 
