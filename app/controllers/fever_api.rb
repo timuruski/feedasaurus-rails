@@ -1,7 +1,10 @@
+require 'base64'
+
 class FeverAPI < Sinatra::Base
 
   # This mocks the parts of the Fever API used by Reeder 3.0 6 for iOS
   VERSION = 3.freeze
+  DEFAULT_FAVICON = Base64.encode64(File.open('public/rss-icon.png', 'rb').read).gsub(/\n/,'')
 
   # Extracts the 'action' portion of a request.
   # The Fever API docs say these needs to be part of the URL and it will
@@ -44,14 +47,22 @@ class FeverAPI < Sinatra::Base
 
   # Feeds
   api_call :feeds do
-    feeds = []
+    feeds = Feed.all.map { |f|
+      { id: f.id, title: f.title,
+        url: f.url, site_url: f.site_url,
+        last_updated_on_time: f.last_refreshed_at.to_i,
+        is_spark: 0, favicon_id: 0 }
+    }
+
     json_response feeds: feeds,
                   feeds_groups: feeds_groups
   end
 
   # Favicons
   api_call :favicons do
-    favicons = []
+    default_icon = { id: 0, data: "image/png;base64,#{DEFAULT_FAVICON}" }
+    favicons = [ default_icon ]
+
     json_response favicons: favicons
   end
 
@@ -93,8 +104,9 @@ class FeverAPI < Sinatra::Base
 
   def feeds_groups
     Group.all.map { |g|
-      feed_ids = Feed.where(:group_id => g.id).pluck(:id).join(',')
-      { group_id: g.id, feed_ids: feed_ids } }
+      feed_ids = g.feeds.pluck(:id).join(',')
+      { group_id: g.id, feed_ids: feed_ids }
+    }
   end
 
   # 
