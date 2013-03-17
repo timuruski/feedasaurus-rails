@@ -68,8 +68,8 @@ class FeverAPI < Sinatra::Base
 
   # Items
   api_call :items do
-    items = Item.order('id ASC').all
-    items = items.map { |i|
+    items_query = build_items_query(params)
+    items = items_query.to_a.map { |i|
       { id: i.id, feed_id: i.feed_id,
         title: i.title, author: i.author, html: i.content,
         url: i.url, created_on_time: i.created_at.to_i,
@@ -113,6 +113,20 @@ class FeverAPI < Sinatra::Base
       feed_ids = g.feeds.pluck(:id).join(',')
       { group_id: g.id, feed_ids: feed_ids }
     }
+  end
+
+  # Builds an items query from request params.
+  def build_items_query(params)
+    min_id = params[:since_id]
+    max_id = params[:max_id]
+    item_ids = String(params[:with_ids]).split(',')
+
+    query = Item.order('id ASC')
+    query = query.where("id <= ?", max_id).limit(50) if max_id
+    query = query.where("id >= ?", min_id).limit(50) if min_id
+    query = query.where(:id => item_ids) if item_ids.any?
+
+    query
   end
 
   # 
