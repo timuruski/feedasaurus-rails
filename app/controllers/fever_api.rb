@@ -37,6 +37,14 @@ class FeverAPI < Sinatra::Base
   end
 
 
+  # Refresh feeds.
+  get '/' do
+    pass unless refresh?
+    Feed.refresh_all
+
+    nil
+  end
+
   # Groups
   api_call :groups do
     groups = Group.all.map { |g|
@@ -163,6 +171,10 @@ class FeverAPI < Sinatra::Base
   # 
   def api_action?
     params.has_key?('api')
+  end
+
+  def refresh?
+    params.has_key?('refresh')
   end
 
   # Constructs a JSON response.

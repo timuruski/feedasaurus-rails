@@ -39,7 +39,7 @@ class Feed < ActiveRecord::Base
 
   # Marks all feeds for refreshing.
   def self.refresh_all
-    update_all(refresh_at: Time.current)
+    update_all(next_refresh_at: Time.current)
   end
 
   # Returns the timestamp of the most recently refreshed feed.
@@ -78,6 +78,10 @@ class Feed < ActiveRecord::Base
   # Marks a feed for refreshing.
   def schedule_refresh
     update_attribute(:next_refresh_at, Time.current)
+  end
+
+  def cancel_refresh
+    update_attribute(:next_refresh_at, nil)
   end
 
   # Immediately refreshes a feed.
