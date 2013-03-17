@@ -49,6 +49,13 @@ class Feed < ActiveRecord::Base
       .first.last_refreshed_at
   end
 
+  def mark_as_read(before = nil)
+    before ||= Time.current
+    items
+      .where('created_at < ?', before)
+      .update_all(read_at: Time.current)
+  end
+
   # Returns whether a refresh is in progress.
   # This seems wrong.
   def needs_refresh?

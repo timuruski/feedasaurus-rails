@@ -10,10 +10,10 @@ class FeverAPI < Sinatra::Base
   # The Fever API docs say these needs to be part of the URL and it will
   # ignore these if they are POSTed, but it seems like a waste of time
   # to emulate this behaviour.
-  set(:action) do |*actions|
+  set(:action) do |action|
     condition do
-      return true if actions.first == :none
-      actions.any? { |a| params.has_key?(a.to_s) }
+      return true if action == :none
+      params.has_key?(action.to_s)
     end
   end
 
@@ -99,6 +99,16 @@ class FeverAPI < Sinatra::Base
     json_response saved_item_ids: saved_item_ids
   end
 
+  # Write item read
+  api_call :mark do
+    case params[:mark]
+    when 'item' then mark_item(params)
+    when 'feed' then mark_feed_as_read(params)
+    # I don't think Reeder marks groups as read.
+    end
+  end
+
+
   # Authenticate/handshake
   api_call :none do
     json_response
@@ -123,10 +133,31 @@ class FeverAPI < Sinatra::Base
 
     query = Item.order('id ASC')
     query = query.where("id <= ?", max_id).limit(50) if max_id
-    query = query.where("id >= ?", min_id).limit(50) if min_id
+    query = query.where("id > ?", min_id).limit(50) if min_id
     query = query.where(:id => item_ids) if item_ids.any?
 
     query
+  end
+
+  def mark_item(params)
+    item_id = params.fetch('id')
+    item = Item.find(item_id)
+    mark = params.fetch('as')
+
+    case mark
+    when 'read' then item.mark_as_read
+    when 'unread' then item.mark_as_unread
+    when 'saved' then item.mark_as_starred
+    when 'unsaved' then item.mark_as_unstarred
+    end
+  end
+
+  def mark_feed_as_read(params)
+    feed_id = params.fetch('id')
+    feed = Feed.find(feed_id)
+
+    before_time = Time.zone.at(params[:before])
+    feed.mark_as_read(before_time)
   end
 
   # 
