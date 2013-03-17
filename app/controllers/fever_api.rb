@@ -68,8 +68,14 @@ class FeverAPI < Sinatra::Base
 
   # Items
   api_call :items do
-    items = []
-    total_items = 0
+    items = Item.order('id ASC').all
+    items = items.map { |i|
+      { id: i.id, feed_id: i.feed_id,
+        title: i.title, author: i.author, html: i.content,
+        url: i.url, created_on_time: i.created_at.to_i,
+        is_read: i.read?, is_saved: i.starred? }
+    }
+    total_items = Item.count
 
     json_response items: items,
                   total_items: total_items
@@ -83,13 +89,13 @@ class FeverAPI < Sinatra::Base
 
   # Sync unread items
   api_call :unread_item_ids do
-    unread_item_ids = ''
+    unread_item_ids = Item.unread.pluck(:id).join(',')
     json_response unread_item_ids: unread_item_ids
   end
 
   # Sync saved items
   api_call :saved_item_ids do
-    saved_item_ids = ''
+    saved_item_ids = Item.starred.pluck(:id).join(',')
     json_response saved_item_ids: saved_item_ids
   end
 
