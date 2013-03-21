@@ -20,6 +20,8 @@ namespace :feeds do
     FeedImporter.import(file) do |f|
       puts %Q{Importing "#{f.title}"}
     end
+
+    file.close
   end
 
   desc "List all feeds"

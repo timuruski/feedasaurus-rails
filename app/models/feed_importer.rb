@@ -17,17 +17,16 @@ class FeedImporter < Struct.new(:file)
   protected
 
   def feeds
-    feed_elements.map { |e|
-      Feed.new do |f|
-        f.title = e[:title]
-        f.url = e[:url]
-      end
-    }
+    feed_elements.map { |e| Feed.new(e) }
   end
 
   def feed_elements
     xml.xpath("//outline[@type='rss']")
-      .map { |e| { url: e['xmlUrl'], title: e['title'] } }
+      .map { |e|
+        { url: e['xmlUrl'],
+          site_url: e['htmlUrl'],
+          title: e['title'] }
+      }
   end
 
   def xml

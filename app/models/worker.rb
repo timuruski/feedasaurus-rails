@@ -30,7 +30,7 @@ class Worker
   end
 
   def wait
-    sleep 15
+    sleep 5
   end
 
   def refresh(feed)
