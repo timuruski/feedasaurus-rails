@@ -11,7 +11,7 @@ class FeedsController < ApplicationController
     @feed = Feed.find(params[:id])
     @feed.schedule_refresh
 
-    redirect_to @feed
+    redirect_to :back
   end
 
   def new

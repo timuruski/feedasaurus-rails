@@ -1,5 +1,8 @@
-<h1><%= @feed.title %></h1>
 <ul>
+  <li class="feed"><%= link_to @feed.title, feeds_path %></li>
+</ul>
+<ul>
+  <li><%= link_to @feed.site_url, @feed.site_url %></li>
   <li>Last refreshed: <%= @feed.last_refreshed_at %></li>
   <li>Next refresh: <%= @feed.next_refresh_at %></li>
   <li>Refresh started: <%= @feed.refresh_started_at %></li>
@@ -12,6 +15,6 @@
 
 <ul>
   <% @feed.items.each do |item| -%>
-  <li><%= link_to item.title, item %></li>
+  <li class="feed-item"><%= link_to item.title, item %></li>
   <% end -%>
 </ul>

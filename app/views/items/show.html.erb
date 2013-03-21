@@ -1,5 +1,13 @@
+<ul>
+  <li class="feed"><%= link_to @item.feed.title, feeds_path %></li>
+</ul>
+
+<ul>
+  <li class="feed-item"><%= link_to @item.title, @item.feed %></li>
+</ul>
+
 <h1><%= @item.title %></h1>
 <p>Published: <%= link_to @item.created_at, @item.url %></p>
 <div id="content">
-  <%= @item.content %>
+  <%= @item.content.html_safe %>
 </div>
