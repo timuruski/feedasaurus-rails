@@ -16,9 +16,6 @@ class CreateFeeds < ActiveRecord::Migration
       # Refreshing
       t.datetime :refresh_started_at
       t.datetime :refreshed_at
-      t.datetime :response_updated_at
-      t.string   :response_etag
-      t.string   :response_status
     end
   end
 end

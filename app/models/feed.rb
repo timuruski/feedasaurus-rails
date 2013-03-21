@@ -13,7 +13,8 @@ class Feed < ActiveRecord::Base
 
   # Associations
   belongs_to :group
-  has_many :items
+  has_one :raw_feed, dependent: :destroy
+  has_many :items, dependent: :destroy
 
   default_scope order('last_refreshed_at DESC')
 
