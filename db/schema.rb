@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130312035024) do
+ActiveRecord::Schema.define(:version => 20130314133847) do
 
   create_table "feeds", :force => true do |t|
     t.integer  "group_id"
@@ -23,11 +23,11 @@ ActiveRecord::Schema.define(:version => 20130312035024) do
     t.string   "password"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
+    t.datetime "refresh_started_at"
     t.datetime "last_refreshed_at"
     t.datetime "response_updated_at"
     t.string   "response_etag"
     t.string   "response_status"
-    t.datetime "refresh_started_at"
     t.datetime "next_refresh_at"
     t.integer  "refresh_every",       :default => 14400
     t.boolean  "enabled",             :default => true
@@ -50,6 +50,17 @@ ActiveRecord::Schema.define(:version => 20130312035024) do
     t.datetime "fetched_at"
     t.datetime "read_at"
     t.datetime "starred_at"
+  end
+
+  create_table "raw_feeds", :force => true do |t|
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "feed_id"
+    t.string   "url"
+    t.integer  "status"
+    t.string   "etag"
+    t.datetime "last_modified"
+    t.text     "headers"
   end
 
 end

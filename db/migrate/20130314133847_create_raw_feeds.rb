@@ -11,8 +11,6 @@ class CreateRawFeeds < ActiveRecord::Migration
       t.string   :etag
       t.datetime :last_modified
       t.text     :headers
-
-      # t.string   :xml_path
     end
   end
 end

@@ -16,6 +16,9 @@
 /log/*.log
 /tmp
 
+# Ignore raw feeds
+/public/raw_feeds
+
 # Ignore Vagrant stuff
 /.vagrant
 

@@ -1,20 +1,22 @@
 require 'digest/md5'
+require 'fileutils'
 
 class RawFeed < ActiveRecord::Base
   belongs_to :feed
   serialize :response_headers
 
-  def self.from_response(response)
-    new do |raw_feed|
-      raw_feed.url = response.url
-      raw_feed.status = response.status
-      raw_feed.headers = response.headers
+  attr_accessible :feed, :response
 
-      raw_feed.etag = response.headers['Etag']
-      raw_feed.last_modified = response.headers['Last-Modified']
+  def response=(response)
+    self.url = response.url
+    self.status = response.status
 
-      raw_feed.xml = response.body
-    end
+    headers = response.headers
+    self.headers = headers
+    self.etag = find_header(headers, 'etag')
+    self.last_modified = find_header(headers, 'last-modified')
+
+    self.xml = response.body
   end
 
   def xml
@@ -25,16 +27,17 @@ class RawFeed < ActiveRecord::Base
     @xml = new_xml
   end
 
-  def xml_path
-    Digest::MD5.hexdigest(url)
+  def read_xml
+    File.read(xml_path) if xml_exists?
   end
 
   def xml_exists?
     File.exists?(xml_path)
   end
 
-  def read_xml
-    xml_exists? ? File.read(xml_path) : ''
+  def xml_path
+    digest = Digest::MD5.hexdigest(url)
+    Rails.root.join('public', 'raw_feeds', "#{digest}.xml")
   end
 
 
@@ -42,6 +45,7 @@ class RawFeed < ActiveRecord::Base
   before_destroy :remove_xml
 
   def update_xml
+    FileUtils.mkdir_p(xml_path.dirname)
     File.open(xml_path, 'w') do |f|
       f << String(xml)
     end
@@ -49,5 +53,13 @@ class RawFeed < ActiveRecord::Base
 
   def remove_xml
     File.delete(xml_path) if xml_exists?
+  end
+
+
+  protected
+
+  def find_header(headers, key)
+    header = headers.detect { |k,_| k.downcase == key }
+    header[1] unless header.nil?
   end
 end
