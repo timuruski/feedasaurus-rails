@@ -7,7 +7,6 @@ class FeedRefresher < Struct.new(:feed)
     new(feed).refresh
   end
 
-  # TODO Move the bits about timestamps out of here.
   def refresh
     items.each do |item_rss|
       create_item(item_rss)
@@ -30,7 +29,12 @@ class FeedRefresher < Struct.new(:feed)
   end
 
   def items
-    @items ||= FeedFetcher.fetch(feed).items
+    @items ||= fetch_items
+  end
+
+  def fetch_items
+    raw_feed = FeedFetcher.fetch(feed.raw_feed)
+    RSS::Parser.parse(raw_feed.xml)
   end
 
 end

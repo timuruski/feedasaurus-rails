@@ -16,6 +16,10 @@ class Feed < ActiveRecord::Base
   has_one :raw_feed, dependent: :destroy
   has_many :items, dependent: :destroy
 
+  after_initialize :ensure_raw_feed
+
+
+  # Maybe this should be by last_modified?
   default_scope order('last_refreshed_at DESC')
 
   # Searches for feeds by title.
@@ -120,5 +124,10 @@ class Feed < ActiveRecord::Base
     self.enabled = true
     self.next_refresh_at = Time.current
     save
+  end
+
+  # Builds a RawFeed if it doesn't exist.
+  def ensure_raw_feed
+    build_raw_feed(url: url) if raw_feed.nil?
   end
 end
