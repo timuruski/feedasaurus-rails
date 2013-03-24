@@ -1,5 +1,17 @@
 Problems to solve
 - redirects and protocol switches, 404s
+- don't re-request up-to-date content
 - truncating content
 - html values
-- atom vs. rss, handled by RSS support?
+- use Rufus for in-server refresh worker
+  makes the app more easily deployed to platforms like Heroku
+- storing raw feed XML in the filesystem prevents deploying to Heroku,
+  consider storing it in the DB or using something like S3.
+- favicons
+- error logging
+
+Google Reader :PI
+https://code.google.com/p/pyrfeed/wiki/GoogleReaderAPI
+https://code.google.com/p/google-reader-api/wiki/Authentication
+https://code.google.com/p/google-reader-api/w/list
+http://www.marco.org/2013/03/14/baby-steps-replacing-google-reader
