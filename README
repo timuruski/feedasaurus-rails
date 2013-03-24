@@ -1,2 +1,9 @@
-An experiment to write an RSS/Atom/Feed multiplexer to replace Google
-Reader. The final product may not be a Rails app.
+Feedasaurus Rails
+=================
+
+A prototype Google Reader replacement written in Rails. The final app
+will have a modular structure and may not even use Rails.
+
+As this is a prototype, this project is largely in flux, so things like
+database migrations will be modified in place, rather than with new
+migrations modifying existing structure.
