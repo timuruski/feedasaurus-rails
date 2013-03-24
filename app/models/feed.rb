@@ -6,14 +6,36 @@ class Feed < ActiveRecord::Base
     presence: false
   validates :site_url,
     optional: true
-  validates :favicon,
-    optional: true
-  # validates :username
-  # validates :password
+
+  # Ugh.
+  attr_accessible :site_url, :title, :url
+
+
+  # Raw Feed
+  # Holds data necessary for refreshing.
+  serialize :raw_feed_headers
+
+  def raw_feed
+    params = {
+      status: raw_feed_status,
+      etag: raw_feed_etag,
+      last_modified: raw_feed_last_modified,
+      headers: raw_feed_headers
+    }
+
+    RawFeed.build(url, params)
+  end
+
+  def raw_feed=(new_raw_feed)
+    self.raw_feed_status = new_raw_feed.status
+    self.raw_feed_etag = new_raw_feed.etag
+    self.raw_feed_last_modified = new_raw_feed.last_modified
+    self.raw_feed_headers = new_raw_feed.headers
+  end
+
 
   # Associations
   belongs_to :group
-  has_one :raw_feed, dependent: :destroy
   has_many :items, dependent: :destroy
 
   after_initialize :ensure_raw_feed

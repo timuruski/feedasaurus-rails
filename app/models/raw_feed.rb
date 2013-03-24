@@ -1,30 +1,34 @@
 require 'digest/md5'
 require 'fileutils'
 
-class RawFeed < ActiveRecord::Base
-  belongs_to :feed
-  serialize :response_headers
+class RawFeed
 
-  attr_accessible :feed, :response
+  def initialize(url, params = nil)
+    @url = url
+    @status = params.fetch(:status)
+    @etag = params.fetch(:etag) { nil }
+    @last_modified = params.fetch(:etag) { nil }
+    @headers = params.fetch(:headers) { { } }
 
-  def response=(response)
-    self.url = response.url
-    self.status = response.status
+    @xml = nil
+  end
+
+  attr_reader :url, :status, :etag, :last_modified, :headers
+
+  def parse_response(response)
+    @url = response.url
+    @status = response.status
 
     headers = response.headers
-    self.headers = headers
-    self.etag = find_header(headers, 'etag')
-    self.last_modified = find_header(headers, 'last-modified')
+    @headers = headers
+    @etag = find_header(headers, 'etag')
+    @last_modified = find_header(headers, 'last-modified')
 
-    self.xml = response.body
+    @xml = response.body
   end
 
   def xml
     @xml ||= read_xml
-  end
-
-  def xml=(new_xml)
-    @xml = new_xml
   end
 
   def read_xml
@@ -40,9 +44,6 @@ class RawFeed < ActiveRecord::Base
     Rails.root.join('public', 'raw_feeds', "#{digest}.xml")
   end
 
-
-  before_save :update_xml
-  before_destroy :remove_xml
 
   def update_xml
     FileUtils.mkdir_p(xml_path.dirname)
