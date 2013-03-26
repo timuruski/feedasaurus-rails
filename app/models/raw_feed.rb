@@ -1,7 +1,9 @@
 require 'digest/md5'
 require 'fileutils'
 
+# This may get folded back into Feed.
 class RawFeed
+  NOT_FOUND = 404
 
   def initialize(url, params = nil)
     @url = url
@@ -27,33 +29,29 @@ class RawFeed
     @xml = response.body
   end
 
+  def not_found?
+    status == NOT_FOUND
+  end
+
   def xml
     @xml ||= read_xml
   end
 
   def read_xml
-    File.read(xml_path) if xml_exists?
+    File.read(storage_path) if stored?
   end
 
-  def xml_exists?
-    File.exists?(xml_path)
+  def stored?
+    File.exists?(storage_path)
   end
 
-  def xml_path
+  def storage_path
     digest = Digest::MD5.hexdigest(url)
     Rails.root.join('public', 'raw_feeds', "#{digest}.xml")
   end
 
-
-  def update_xml
-    FileUtils.mkdir_p(xml_path.dirname)
-    File.open(xml_path, 'w') do |f|
-      f << String(xml)
-    end
-  end
-
-  def remove_xml
-    File.delete(xml_path) if xml_exists?
+  def storage_dir
+    storage_path.dirname
   end
 
 

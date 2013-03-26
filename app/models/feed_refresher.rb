@@ -33,8 +33,8 @@ class FeedRefresher < Struct.new(:feed)
   end
 
   def fetch_items
-    raw_feed = FeedFetcher.fetch(feed.raw_feed)
-    RSS::Parser.parse(raw_feed.xml)
+    request = FeedFetcher.fetch(feed.raw_feed)
+    RSS::Parser.parse(request.body)
   end
 
 end
