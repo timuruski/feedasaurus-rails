@@ -17,46 +17,17 @@ class Feed < ActiveRecord::Base
   has_many :requests, :class_name => 'FeedRequest'
 
   def last_request
-    requests.first
+    requests.first || initial_request
   end
 
   def last_successful_request
-    requsts.successful.first
+    requsts.successful.first || initial_request
   end
 
-  # Raw Feed
-  # Holds data necessary for refreshing.
-  serialize :raw_feed_headers
-  before_save :store_raw_xml
-  before_destroy :remove_raw_xml
-
-  def raw_feed
-    params = {
-      status: raw_feed_status,
-      etag: raw_feed_etag,
-      last_modified: raw_feed_last_modified,
-      headers: raw_feed_headers
-    }
-
-    RawFeed.build(url, params)
-  end
-
-  def raw_feed=(new_raw_feed)
-    self.raw_feed_status = new_raw_feed.status
-    self.raw_feed_etag = new_raw_feed.etag
-    self.raw_feed_last_modified = new_raw_feed.last_modified
-    self.raw_feed_headers = new_raw_feed.headers
-  end
-
-  def store_raw_xml
-    FileUtils.mkdir_p(raw_feed.storage_dir)
-    File.open(raw_feed.storage_path, 'w') do |f|
-      f << String(raw_feed.xml)
+  def initial_request
+    FeedRequest.new do |request|
+      request.url = url
     end
-  end
-
-  def remove_raw_xml
-    File.delete(raw_feed.storage_path) if raw_feed.stored?
   end
 
 
