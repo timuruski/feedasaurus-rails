@@ -21,7 +21,7 @@ class Feed < ActiveRecord::Base
   end
 
   def last_successful_request
-    requsts.successful.first || initial_request
+    requests.successful.first || initial_request
   end
 
   def initial_request
@@ -34,8 +34,6 @@ class Feed < ActiveRecord::Base
   # Associations
   belongs_to :group
   has_many :items, dependent: :destroy
-
-  after_initialize :ensure_raw_feed
 
 
   # Maybe this should be by last_modified?
@@ -145,8 +143,4 @@ class Feed < ActiveRecord::Base
     save
   end
 
-  # Builds a RawFeed if it doesn't exist.
-  def ensure_raw_feed
-    build_raw_feed(url: url) if raw_feed.nil?
-  end
 end

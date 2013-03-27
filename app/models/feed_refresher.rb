@@ -11,18 +11,6 @@ class FeedRefresher < Struct.new(:feed)
     request = fetch_feed
     create_items(request)
     persist_request(request)
-    store_raw_xml(request)
-
-
-    # Update items
-    items = parse_items(request)
-    items.each do |item_rss|
-      create_item(item_rss)
-    end
-
-    # Update the request
-
-    # Store 
 
     feed
   end
@@ -58,32 +46,7 @@ class FeedRefresher < Struct.new(:feed)
 
   def persist_request(request)
     feed.requests << request
+    request.save
   end
-
-  def store_raw_xml(request)
-    FileUtils.mkdir_p(raw_feed.storage_dir)
-    File.open(raw_feed.storage_path, 'w') do |f|
-      f << String(raw_feed.xml)
-    end
-  end
-
-  def stored?
-    File.exists?(storage_path)
-  end
-
-  def storage_path
-    digest = Digest::MD5.hexdigest(url)
-    Rails.root.join('public', 'raw_feeds', "#{digest}.xml")
-  end
-
-  def storage_dir
-    storage_path.dirname
-  end
-
-  # def remove_raw_xml
-  #   File.delete(raw_feed.storage_path) if raw_feed.stored?
-  # end
-
-
 
 end
