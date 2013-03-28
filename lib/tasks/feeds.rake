@@ -44,9 +44,24 @@ namespace :feeds do
     feed.refresh!
   end
 
-  desc "Refresh all feeds"
+  desc "Refresh all feeds (requires worker)"
   task :refresh_all do
     Feed.find_each do |feed|
+      feed.schedule_refresh
+    end
+  end
+
+  desc "Refresh all feeds immediately (synchronous, no worker)"
+  task :refresh_all_now do
+    stop_refresh = false
+    trap('TERM') { running = true }
+    trap('INT') { running = true }
+
+    puts "Refreshing all feeds (^C to stop)\n---"
+
+    Feed.find_each do |feed|
+      break if stop_refresh
+
       puts "Refreshing #{feed.title}..."
       feed.refresh!
     end
