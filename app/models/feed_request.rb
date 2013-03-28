@@ -1,4 +1,15 @@
+# These will probably pile up a fair bit, so some sort of worker to
+# discard old requests or discard not-modified requests. Maybe those
+# aren't saved in the first place?
 class FeedRequest < ActiveRecord::Base
+  belongs_to :feed
+  # Probably better to just dump headers as a raw string.
+  serialize :headers
+
+  validates :feed, presence: true
+  validates :status, exclusion: { in: [304] }
+  validates :url, presence: true
+
   def parse_response(response)
     self.url = response.url
     self.status = response.status
@@ -28,6 +39,10 @@ class FeedRequest < ActiveRecord::Base
 
   def not_found?
     status == 404
+  end
+
+  def not_modified?
+    status == 304
   end
 
   def redirect?

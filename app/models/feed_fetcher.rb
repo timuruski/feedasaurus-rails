@@ -13,16 +13,9 @@ class FeedFetcher
   # updates. If there is no change, the original RawFeed is returned.
   def fetch
     response = get_request
-    # Need some way to record 404s and such so that they can be filtered
-    # out or updated when a feed moves, etc.
-    # Also need to handle permanent redirects, etc.
-    if response.success?
-      FeedRequest.new do |request|
-        request.parse_response(response)
-      end
-    else
-      request
-    end
+    # Permanent redirects should get pushed up into the feed.
+    request.parse_response(response)
+    request
   end
 
 

@@ -9,17 +9,15 @@ class FeedRefresher < Struct.new(:feed)
 
   def refresh
     request = fetch_feed
-    if request.new_body?
-      create_items(request)
-      persist_request(request)
-    end
+    create_items(request) if request.new_body?
+    request.save
 
     feed
   end
 
   def fetch_feed
-    initial_request = feed.last_successful_request
-    FeedFetcher.fetch(initial_request)
+    request = feed.build_request
+    FeedFetcher.fetch(request)
   end
 
   def create_items(request)
@@ -44,11 +42,6 @@ class FeedRefresher < Struct.new(:feed)
 
   def item_exists?(item_rss)
     feed.items.where(url: item_rss.url).exists?
-  end
-
-  def persist_request(request)
-    feed.requests << request
-    request.save
   end
 
 end

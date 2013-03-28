@@ -17,16 +17,23 @@ class Feed < ActiveRecord::Base
   has_many :requests, :class_name => 'FeedRequest'
 
   def last_request
-    requests.first || initial_request
+    requests.first
   end
 
   def last_successful_request
-    requests.successful.first || initial_request
+    requests.successful.first
   end
 
-  def initial_request
-    FeedRequest.new do |request|
+  # A seed request used to refresh the feed. Once completed it is saved
+  # to the database for analysis.
+  def build_request
+    request_template = last_successful_request
+    requests.build do |request|
       request.url = url
+      if request_template
+        request.etag = request_template.etag
+        request.last_modified = request_template.last_modified
+      end
     end
   end
 

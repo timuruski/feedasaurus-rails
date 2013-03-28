@@ -1,7 +1,7 @@
 require 'digest/md5'
 require 'fileutils'
 
-# This may get folded back into Feed.
+# DEPRECATED
 class RawFeed
   NOT_FOUND = 404
 
