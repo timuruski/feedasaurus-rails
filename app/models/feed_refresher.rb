@@ -9,8 +9,10 @@ class FeedRefresher < Struct.new(:feed)
 
   def refresh
     request = fetch_feed
-    create_items(request)
-    persist_request(request)
+    if request.new_body?
+      create_items(request)
+      persist_request(request)
+    end
 
     feed
   end
