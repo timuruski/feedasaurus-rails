@@ -14,7 +14,9 @@ class Feed < ActiveRecord::Base
   # FeedRequests are used to make intelligent future requests, handle
   # permanent redirects and track a rough metric on which feeds are
   # unreliable.
-  has_many :requests, :class_name => 'FeedRequest'
+  has_many :requests,
+    class_name: 'FeedRequest',
+    validate: false
 
   def last_request
     requests.first
@@ -124,6 +126,8 @@ class Feed < ActiveRecord::Base
     end
 
     self.refresh_started_at = nil
+    # BUG If the feed fails to save for whatever reason, the
+    # next_refresh at isn't updated and the worker will churn.
     save
   end
 

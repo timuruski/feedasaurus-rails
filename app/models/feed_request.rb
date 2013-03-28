@@ -6,9 +6,12 @@ class FeedRequest < ActiveRecord::Base
   # Probably better to just dump headers as a raw string.
   serialize :headers
 
-  validates :feed, presence: true
-  validates :status, exclusion: { in: [304] }
-  validates :url, presence: true
+  validates :feed,
+    presence: true
+  validates :status,
+    exclusion: { in: [304] }
+  validates :url,
+    presence: true
 
   def parse_response(response)
     self.url = response.url
