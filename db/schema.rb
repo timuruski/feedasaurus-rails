@@ -14,7 +14,9 @@
 ActiveRecord::Schema.define(:version => 20130326014631) do
 
   create_table "feed_requests", :force => true do |t|
+    t.integer  "feed_id",       :null => false
     t.datetime "created_at",    :null => false
+    t.string   "url",           :null => false
     t.integer  "status",        :null => false
     t.string   "etag"
     t.datetime "last_modified"

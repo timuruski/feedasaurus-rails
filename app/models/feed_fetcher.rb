@@ -2,11 +2,11 @@ require 'patron'
 
 class FeedFetcher
 
-  def initialize(raw_feed)
-    @raw_feed = raw_feed
+  def initialize(request)
+    @request = request
   end
 
-  attr_reader :raw_feed
+  attr_reader :request
 
   # Returns a RawFeed based on the fetch operation.
   # If there is new content, a new RawFeed instance is returned with the
@@ -16,14 +16,19 @@ class FeedFetcher
     # Need some way to record 404s and such so that they can be filtered
     # out or updated when a feed moves, etc.
     # Also need to handle permanent redirects, etc.
-    raw_feed.response = response if response.success?
-    raw_feed
+    if response.success?
+      FeedRequest.new do |request|
+        request.parse_response(response)
+      end
+    else
+      request
+    end
   end
 
 
   # Convenience
-  def self.fetch(raw_feed)
-    new(raw_feed).fetch
+  def self.fetch(request)
+    new(request).fetch
   end
 
 
@@ -40,18 +45,18 @@ class FeedFetcher
   protected
 
   def get_request
-    response.session.get(url.path, request_headers)
+    response = session.get(url.path, request_headers)
     response.extend StatusQuery
     response
   end
 
   def url
-    @url ||= URI.parse(raw_feed.url)
+    @url ||= URI.parse(request.url)
   end
 
   def request_headers
-    etag = raw_feed.etag
-    last_modified = raw_feed.last_modified.try(:httpdate)
+    etag = request.etag
+    last_modified = request.last_modified.try(:httpdate)
 
     headers = {}
     headers['If-None-Match'] = etag if etag.present?

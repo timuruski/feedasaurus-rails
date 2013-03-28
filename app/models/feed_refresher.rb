@@ -21,7 +21,7 @@ class FeedRefresher < Struct.new(:feed)
   end
 
   def create_items(request)
-    items = parse_items(request)
+    items = parse_items(request).items
     items.each do |item_rss|
       create_item(item_rss)
     end
