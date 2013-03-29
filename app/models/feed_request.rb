@@ -55,7 +55,8 @@ class FeedRequest < ActiveRecord::Base
   def save_body
     FileUtils.mkdir_p(storage_dir)
     File.open(storage_path, 'w') do |f|
-      f << String(body)
+      # Force UTF encoding, ignore weird values.
+      f << String(body).encode('utf-8', invalid: :replace, undef: :replace, replace: '?')
     end
   end
 
@@ -84,6 +85,12 @@ class FeedRequest < ActiveRecord::Base
 
   def find_header(headers, key)
     header = headers.detect { |k,_| k.downcase == key }
-    header[1] unless header.nil?
+    return if header.nil?
+
+    value = header[1]
+    # Patron zips multiple headers from redirected requests
+    # together, which messes up a lot of stuff.
+    value = value.last if value.is_a? Array
+    value
   end
 end
