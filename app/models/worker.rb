@@ -41,21 +41,27 @@ class Worker
     @verbose
   end
 
+  # TODO
+  # Retry the refresh after a delay if the error is a temporary
+  # network outage, eg. 500 Errors, Internet not available, etc.
+  #   eg. Patron::ConnectionFailed
+  #
+  # Cancel refresh if the error is parsing related.
+  # Maybe mark the feed as unparseable?
+  #   eg. RSS::Error
   def refresh(feed)
     feed.refresh!
-  rescue => error
+  rescue FeedRefresher::Error => error
+    log_error(error)
+    feed.cancel_refresh
+  rescue
+    stop
+  end
+
+  def log_error(error)
     err.puts error.message
     err.puts error.original_message
     err.puts(*error.original_backtrace) if verbose?
-
-    # TODO
-    # Retry the refresh after a delay if the error is a temporary
-    # network outage, eg. 500 Errors, Internet not available, etc.
-    #   eg. Patron::ConnectionFailed
-    #
-    # Cancel refresh if the error is parsing related.
-    # Maybe mark the feed as unparseable?
-    #   eg. RSS::Error
-    feed.cancel_refresh
+    err.puts "Future refreshes cancelled"
   end
 end

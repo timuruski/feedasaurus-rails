@@ -15,11 +15,11 @@ class FeedRefresher < Struct.new(:feed)
 
     feed
   rescue
-    raise RefreshError, %Q(Error refreshing feed #{feed.id} "#{feed.title}")
+    raise Error, %Q(Error refreshing feed #{feed.id} "#{feed.title}")
   end
 
 
-  class RefreshError < RuntimeError
+  class Error < RuntimeError
     def initialize(message, original = $!)
       super(message)
       @original = original

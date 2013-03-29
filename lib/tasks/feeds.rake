@@ -1,5 +1,3 @@
-require_relative '../../config/environment'
-
 namespace :feeds do
 
   def describe_feed(feed)
@@ -15,14 +13,14 @@ namespace :feeds do
   def refresh_and_capture_error(feed)
     puts "Refreshing feed #{describe_feed(feed)}"
     feed.refresh!
-  rescue FeedRefresher::RefreshError => error
+  rescue FeedRefresher::Error => error
     puts error.message
     puts error.original_message
     puts *error.original_backtrace
   end
 
   desc "Start worker to periodically refresh feeds"
-  task :worker do
+  task :worker => :environment do
     worker_out = STDOUT
     worker_out.sync = true
 
@@ -34,7 +32,7 @@ namespace :feeds do
   end
 
   desc "Import feeds from OPML"
-  task :import, :file do |t, args|
+  task :import, [:file] => :environment do |t, args|
     file = File.open(args[:file], 'r')
     FeedImporter.import(file) do |f|
       puts %Q{Importing "#{f.title}"}
@@ -44,34 +42,34 @@ namespace :feeds do
   end
 
   desc "List all feeds"
-  task :list do
+  task :list => :environment do
     Feed.find_each do |f|
       puts describe_feed(f)
     end
   end
 
   desc "Search for a feed by title"
-  task :search, :query do |t, args|
+  task :search, [:query] => :environment do |t, args|
     Feed.search(args[:query]).find_each do |f|
       puts describe_feed(f)
     end
   end
 
   desc "Refresh the items in a feed"
-  task :refresh, :feed_id do |t, args|
+  task :refresh, [:feed_id] => :environment do |t, args|
     feed = Feed.find(args[:feed_id])
     refresh_and_capture_error(feed)
   end
 
   desc "Refresh all feeds (requires worker)"
-  task :refresh_all do
+  task :refresh_all => :environment do
     Feed.find_each do |feed|
       feed.schedule_refresh
     end
   end
 
   desc "Refresh all feeds immediately (synchronous, no worker)"
-  task :refresh_all_now do
+  task :refresh_all_now => :environment do
     stop_refresh = false
     trap('TERM') { stop_refresh = true }
     trap('INT') { stop_refresh = true }
@@ -85,20 +83,20 @@ namespace :feeds do
   end
 
   desc "Reset a feed"
-  task :reset, :feed_id do |t, args|
+  task :reset, [:feed_id] => :environment do |t, args|
     feed = Feed.find(args[:feed_id])
     feed.reset
   end
 
   desc "Reset all feeds"
-  task :reset_all do
+  task :reset_all => :environment do
     Feed.find_each do |feed|
       feed.reset
     end
   end
 
   desc "Purge all feeds"
-  task :purge do
+  task :purge => :environment do
     Feed.destroy_all
   end
 

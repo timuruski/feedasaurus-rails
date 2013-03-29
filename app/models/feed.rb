@@ -16,7 +16,8 @@ class Feed < ActiveRecord::Base
   # unreliable.
   has_many :requests,
     class_name: 'FeedRequest',
-    validate: false
+    validate: false,
+    autosave: false
 
   def last_request
     requests.first
