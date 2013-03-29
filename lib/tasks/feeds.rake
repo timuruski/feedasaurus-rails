@@ -2,6 +2,25 @@ require_relative '../../config/environment'
 
 namespace :feeds do
 
+  def describe_feed(feed)
+    if feed.last_refreshed_at
+      last_refreshed = "last refreshed at #{feed.last_refreshed_at.asctime}"
+    else
+      last_refreshed = 'never refreshed'
+    end
+
+    %Q(#{feed.id} "#{feed.title}" #{last_refreshed})
+  end
+
+  def refresh_and_capture_error(feed)
+    puts "Refreshing feed #{describe_feed(feed)}"
+    feed.refresh!
+  rescue FeedRefresher::RefreshError => error
+    puts error.message
+    puts error.original_message
+    puts *error.original_backtrace
+  end
+
   desc "Start worker to periodically refresh feeds"
   task :worker do
     worker_out = STDOUT
@@ -27,21 +46,21 @@ namespace :feeds do
   desc "List all feeds"
   task :list do
     Feed.find_each do |f|
-      puts "#{f.id}: #{f.title} - #{f.last_refreshed_at? ? f.last_refreshed_at.strftime('%c') : 'Never'}"
+      puts describe_feed(f)
     end
   end
 
   desc "Search for a feed by title"
   task :search, :query do |t, args|
     Feed.search(args[:query]).find_each do |f|
-      puts "#{f.id}: #{f.title} - #{f.last_refreshed_at? ? f.last_refreshed_at.strftime('%c') : 'Never'}"
+      puts describe_feed(f)
     end
   end
 
   desc "Refresh the items in a feed"
   task :refresh, :feed_id do |t, args|
     feed = Feed.find(args[:feed_id])
-    feed.refresh!
+    refresh_and_capture_error(feed)
   end
 
   desc "Refresh all feeds (requires worker)"
@@ -54,16 +73,14 @@ namespace :feeds do
   desc "Refresh all feeds immediately (synchronous, no worker)"
   task :refresh_all_now do
     stop_refresh = false
-    trap('TERM') { running = true }
-    trap('INT') { running = true }
+    trap('TERM') { stop_refresh = true }
+    trap('INT') { stop_refresh = true }
 
     puts "Refreshing all feeds (^C to stop)\n---"
 
     Feed.find_each do |feed|
-      break if stop_refresh
-
-      puts "Refreshing #{feed.title}..."
-      feed.refresh!
+      puts "Stopping..." and break if stop_refresh
+      refresh_and_capture_error(feed)
     end
   end
 

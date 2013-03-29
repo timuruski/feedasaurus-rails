@@ -11,6 +11,9 @@ class FeedFetcher
   # Returns a RawFeed based on the fetch operation.
   # If there is new content, a new RawFeed instance is returned with the
   # updates. If there is no change, the original RawFeed is returned.
+  #
+  # TODO Handle unresolveable host eg. secure.buildinghypermediaapis.com
+  # TODO Handle Patron::ConnectionFailed
   def fetch
     response = get_request
     # Permanent redirects should get pushed up into the feed.

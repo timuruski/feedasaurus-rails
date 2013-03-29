@@ -9,11 +9,30 @@ class FeedRefresher < Struct.new(:feed)
 
   def refresh
     request = fetch_feed
-    create_items(request) if request.new_body?
     request.save
 
+    create_items(request) if request.new_body?
+
     feed
+  rescue
+    raise RefreshError, %Q(Error refreshing feed #{feed.id} "#{feed.title}")
   end
+
+
+  class RefreshError < RuntimeError
+    def initialize(message, original = $!)
+      super(message)
+      @original = original
+    end
+
+    attr_reader :original
+    def original_message; original.message end
+    def original_backtrace; original.backtrace end
+  end
+
+
+  protected
+
 
   def fetch_feed
     request = feed.build_request

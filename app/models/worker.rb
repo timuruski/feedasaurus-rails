@@ -1,8 +1,11 @@
+# WORKER IS NOT CONCURRENCY SAFE!
+# ===============================
 class Worker
-  def initialize(out = nil, err = nil)
+  def initialize(out = nil, err = nil, options = {})
     @running = true
     @out = out || STDOUT
     @err = err || STDERR
+    @verbose = options.fetch(:verbose) { true }
   end
 
   attr_reader :out, :err
@@ -21,6 +24,7 @@ class Worker
   end
 
   def work
+    # TODO Use some sort of lock or mutex here for concurrency.
     feed = Feed.refreshable.first
     return if feed.nil?
 
@@ -33,12 +37,25 @@ class Worker
     sleep 5
   end
 
+  def verbose?
+    @verbose
+  end
+
   def refresh(feed)
     feed.refresh!
   rescue => error
-    err.puts "  An error occurred, #{error.inspect}"
-    # Should mark the feed as errored on some way.
-    # Also dumping a stack trace out would be helpful.
+    err.puts error.message
+    err.puts error.original_message
+    err.puts(*error.original_backtrace) if verbose?
+
+    # TODO
+    # Retry the refresh after a delay if the error is a temporary
+    # network outage, eg. 500 Errors, Internet not available, etc.
+    #   eg. Patron::ConnectionFailed
+    #
+    # Cancel refresh if the error is parsing related.
+    # Maybe mark the feed as unparseable?
+    #   eg. RSS::Error
     feed.cancel_refresh
   end
 end
