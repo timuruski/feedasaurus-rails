@@ -12,6 +12,10 @@ class ItemBuilder < Struct.new(:item)
     builder_class.new(item).build
   end
 
+  def in_time_zone(time)
+    time.try(:in_time_zone) || Time.current
+  end
+
   # Specific converters
   class AtomItemBuilder < self
     def build
@@ -20,7 +24,7 @@ class ItemBuilder < Struct.new(:item)
         i.title = item.title.try(:content)
         i.author = item.author.try(:name).try(:content)
         i.content = item.content.try(:content)
-        i.created_at = item.published.try(:content)
+        i.created_at = in_time_zone(item.published.try(:content))
       end
     end
   end
@@ -32,7 +36,7 @@ class ItemBuilder < Struct.new(:item)
         i.title = item.title
         i.author = item.author
         i.content = item.description
-        i.created_at = item.pubDate
+        i.created_at = in_time_zone(item.pubDate)
       end
     end
   end
@@ -44,7 +48,7 @@ class ItemBuilder < Struct.new(:item)
         i.title = item.title
         i.author = item.dc_creator
         i.content = item.description
-        i.created_at = item.dc_date
+        i.created_at = in_time_zone(item.dc_date)
       end
     end
   end
