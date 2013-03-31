@@ -1,13 +1,18 @@
-<ul>
-  <li class="feed"><%= link_to @item.feed.title, feeds_path %></li>
-</ul>
+<header id="feed-header">
+  <ul>
+    <li class="feed"><%= link_to @item.feed.title, feeds_path %></li>
+  </ul>
+</header>
 
-<ul>
-  <li class="feed-item"><%= link_to @item.title, @item.feed %></li>
-</ul>
+<header id="item-header">
+  <ul>
+    <li class="feed-item"><%= link_to @item.title, @item.feed %></li>
+  </ul>
+</header>
 
-<h1><%= @item.title %></h1>
-<p>Published: <%= link_to @item.created_at, @item.url %></p>
-<div id="content">
-  <%= @item.content.html_safe %>
-</div>
+<article>
+  <p>Published: <%= link_to @item.created_at, @item.url %></p>
+  <div id="content">
+    <%= @item.content.html_safe %>
+  </div>
+</article>
