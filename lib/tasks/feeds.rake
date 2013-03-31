@@ -2,7 +2,7 @@ namespace :feeds do
 
   def describe_feed(feed)
     if feed.last_refreshed_at
-      last_refreshed = "last refreshed at #{feed.last_refreshed_at.asctime}"
+      last_refreshed = "last refreshed #{feed.last_refreshed_at.asctime}"
     else
       last_refreshed = 'never refreshed'
     end
@@ -52,6 +52,16 @@ namespace :feeds do
   task :search, [:query] => :environment do |t, args|
     Feed.search(args[:query]).find_each do |f|
       puts describe_feed(f)
+    end
+  end
+
+  desc "Show a feed"
+  task :show, [:feed_id] => :environment do |t, args|
+    feed = Feed.find(args[:feed_id])
+    puts describe_feed(feed)
+    puts "Items: #{feed.items.count}"
+    feed.items.each do |item|
+      puts %Q(  #{item.id}: "#{item.title}" published #{item.created_at.asctime})
     end
   end
 

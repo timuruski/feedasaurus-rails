@@ -2,6 +2,8 @@ class Item < ActiveRecord::Base
   attr_accessible :author, :body, :fetched_at, :read_at, :starred_at, :title, :url
   belongs_to :feed
 
+  default_scope order('created_at DESC')
+
   scope :read, -> { where('read_at IS NOT NULL') }
   scope :unread, -> { where('read_at IS NULL') }
   scope :starred, -> { where('starred_at IS NOT NULL') }

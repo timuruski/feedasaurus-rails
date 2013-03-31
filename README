@@ -7,3 +7,32 @@ will have a modular structure and may not even use Rails.
 As this is a prototype, this project is largely in flux, so things like
 database migrations will be modified in place, rather than with new
 migrations modifying existing structure.
+
+
+## Dependencies
+
+The data store is PostgreSQL 9.2.3. The application runs two processes,
+a web process for the in-browser scaffolding and a worker process to
+handle refreshing feeds.
+
+## Setting up
+
+Rake tasks are included for managing feeds.
+
+    $ rake feeds:list
+    $ rake feeds:search[ars technica]
+    $ rake feeds:show[123]
+
+Feeds can be imported from an OPML file exported by Google Reader.
+
+    $ rake feeds:import[feeds.xml]
+
+To update a feed, it can be scheduled for refresh by the worker
+process.
+
+    $ rake feeds:refresh_all
+
+A feed can also be immediately updated with the following Rake tasks.
+
+    $ rake feeds:refresh[123]
+    $ rake feeds:refresh_all_now

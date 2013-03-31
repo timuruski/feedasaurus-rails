@@ -50,7 +50,7 @@ class Feed < ActiveRecord::Base
   default_scope order('last_refreshed_at DESC')
 
   # Searches for feeds by title.
-  scope :search, lambda { |query|
+  scope :search, ->(query) {
     query = "%#{query.downcase}%"
     where('title ILIKE ?', query) }
 
@@ -58,10 +58,15 @@ class Feed < ActiveRecord::Base
   scope :disabled, where(:enabled => false)
 
   # Returns a list of feeds to be refreshed.
-  scope :refreshable, lambda {
-    where('next_refresh_at <= ?', Time.current)
-      .enabled
+  scope :refreshable, ->(as_of = Time.current) {
+    enabled
+      .where('next_refresh_at <= ?', as_of)
       .order('next_refresh_at ASC') }
+
+  # Returns a list of feeds that cannot be refreshed.
+  scope :not_refreshable, -> {
+    enabled
+      .where(:next_refresh_at => nil) }
 
   # TODO Use the Feed#refresh method instead.
   def self.refresh(id)
@@ -135,6 +140,7 @@ class Feed < ActiveRecord::Base
   # Resets a feed so that it has not been updated.
   def reset
     items.destroy_all
+    requests.destroy_all
     last_refreshed_at = nil
     next_refresh_at = nil
 
