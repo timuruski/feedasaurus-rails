@@ -68,6 +68,16 @@ class Feed < ActiveRecord::Base
     enabled
       .where(:next_refresh_at => nil) }
 
+  # Returns a timestamp for the next refreshable Feed.
+  def self.next_refresh_at
+    enabled
+      .where('next_refresh_at IS NOT NULL')
+      .order('next_refresh_at ASC')
+      .limit(1)
+      .pluck(:next_refresh_at)
+      .first
+  end
+
   # TODO Use the Feed#refresh method instead.
   def self.refresh(id)
     feed = find(id)
@@ -105,7 +115,7 @@ class Feed < ActiveRecord::Base
   end
 
   # Returns whether a refresh is in progress.
-  def refresh_in_progess?
+  def refresh_in_progress?
     return false if refresh_started_at.nil?
     return true if refresh_started_at && last_refreshed_at.nil?
 

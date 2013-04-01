@@ -5,11 +5,43 @@
 
 body {
   background: #FFFFFF;
+  font: normal 20px/28px “Gill Sans”, “Gill Sans MT”, Calibri, sans-serif;;
 }
 
 #container {
   max-width: 600px;
   margin: auto auto;
+  padding: 0 0 40px;
 }
 
 
+#feeds {
+  margin: 0;
+  padding: 0;
+}
+
+  #feeds ul {
+    background: #FCFCFC;
+    list-style: none none;
+    margin: 0;
+    padding: 12px;
+  }
+
+
+#items {
+  margin: 0;
+  padding: 0;
+}
+
+  #items ul {
+    background: #F0F0F0;
+    list-style: none none;
+    margin: 0;
+    padding: 12px;
+  }
+
+
+#item {
+  margin: 0;
+  padding: 12px;
+}

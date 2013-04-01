@@ -1,5 +1,7 @@
-<ul>
-  <% @feeds.each do |feed| -%>
-  <li class="feed"><%= link_to feed.title, feed %></li>
-  <% end -%>
-</ul>
+<div id="feeds">
+  <ul>
+    <% @feeds.each do |feed| -%>
+    <li class="feed"><%= link_to feed.title, feed %></li>
+    <% end -%>
+  </ul>
+</div>

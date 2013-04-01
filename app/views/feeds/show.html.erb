@@ -1,20 +1,25 @@
-<ul>
-  <li class="feed"><%= link_to @feed.title, feeds_path %></li>
-</ul>
-<ul>
-  <li><%= link_to @feed.site_url, @feed.site_url %></li>
-  <li>Last refreshed: <%= @feed.last_refreshed_at %></li>
-  <li>Next refresh: <%= @feed.next_refresh_at %></li>
-  <li>Refresh started: <%= @feed.refresh_started_at %></li>
-</ul>
-<% if @feed.refresh_scheduled? -%>
-  <p>Refreshing...</p>
-<% else -%>
-  <p><%= link_to(feed_refresh_text(@feed), action: :refresh) %></p>
-<% end -%>
+<div id="feeds">
+  <ul>
+    <li class="feed"><%= link_to @feed.title, feeds_path %></li>
+  </ul>
+</div>
 
-<ul>
-  <% @feed.items.each do |item| -%>
-  <li class="feed-item"><%= link_to item.title, item %></li>
+<div id="items">
+  <ul>
+    <li><%= link_to @feed.site_url, @feed.site_url %></li>
+    <li>Last refreshed: <%= format_time(@feed.last_refreshed_at) %></li>
+    <li>Next refresh: <%= format_time(@feed.next_refresh_at) %></li>
+    <li>Refresh started: <%= format_time(@feed.refresh_started_at) %></li>
+  </ul>
+  <% if @feed.refresh_in_progress? -%>
+    <p>Refreshing...</p>
+  <% else -%>
+    <p><%= link_to(feed_refresh_text(@feed), action: :refresh) %></p>
   <% end -%>
-</ul>
+  <ul>
+    <% @feed.items.each do |item| -%>
+    <li class="feed-item"><%= link_to item.title, item %></li>
+    <% end -%>
+  </ul>
+</div>
+

@@ -1,18 +1,18 @@
-<header id="feed-header">
+<div id="feeds">
   <ul>
     <li class="feed"><%= link_to @item.feed.title, feeds_path %></li>
   </ul>
-</header>
+</div>
 
-<header id="item-header">
+<div id="items">
   <ul>
     <li class="feed-item"><%= link_to @item.title, @item.feed %></li>
   </ul>
-</header>
+</div>
 
-<article>
-  <p>Published: <%= link_to @item.created_at, @item.url %></p>
-  <div id="content">
+<div id="item">
+  <p>Published: <%= link_to format_time(@item.created_at), @item.url %></p>
+  <article id="item-content">
     <%= @item.content.html_safe %>
-  </div>
-</article>
+  </article>
+</div>
