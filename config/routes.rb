@@ -1,8 +1,8 @@
 FeedasaurusRails::Application.routes.draw do
   root :to => 'feeds#index'
 
-  resources :groups
-  resources :feeds do
+  resources :groups, only: [:index]
+  resources :feeds, only: [:index, :show, :create] do
     member do
       get :refresh
     end

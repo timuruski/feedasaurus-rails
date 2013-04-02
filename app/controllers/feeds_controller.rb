@@ -1,6 +1,7 @@
 class FeedsController < ApplicationController
   def index
     @feeds = Feed.all
+    @new_feed = Feed.new
   end
 
   def show
@@ -19,7 +20,11 @@ class FeedsController < ApplicationController
   end
 
   def create
-    @feed = Feed.new
+    @feed = Feed.new(params)
+    # Validate feed is XML
+    # Validate feed isn't a duplicate
+    # Handle multiple alternates
+    redirect_to action: :index
   end
 
   def edit
