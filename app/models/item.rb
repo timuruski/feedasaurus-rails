@@ -9,6 +9,10 @@ class Item < ActiveRecord::Base
   scope :starred, -> { where('starred_at IS NOT NULL') }
   scope :unstarred, -> { where('starred_at IS NULL') }
 
+  def self.find_by_url(url)
+    where(url: url)
+  end
+
   def mark_as_read
     update_attribute(:read_at, Time.current)
   end
@@ -33,5 +37,10 @@ class Item < ActiveRecord::Base
   # Returns whether an item has been starred.
   def starred?
     not starred_at.nil?
+  end
+
+  def exists?
+    persisted? ||
+      self.class.find_by_url(url).exists?
   end
 end

@@ -96,6 +96,10 @@ class Feed < ActiveRecord::Base
       .first.last_refreshed_at
   end
 
+  def self.find_by_url(url)
+    where(url: url)
+  end
+
   def mark_as_read(before = nil)
     before ||= Time.current
     items
@@ -169,6 +173,16 @@ class Feed < ActiveRecord::Base
     self.enabled = true
     self.next_refresh_at = Time.current
     save
+  end
+
+  # Returns whether a Feed is already in the database or not.
+  def exists?
+    persisted? ||
+      self.class.find_by_url(url).exists?
+  end
+
+  def verify_url
+    true
   end
 
 end

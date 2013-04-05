@@ -1,13 +1,12 @@
 FeedasaurusRails::Application.routes.draw do
   root :to => 'feeds#index'
 
-  resources :groups, only: [:index]
-  resources :feeds, only: [:index, :show, :create] do
-    member do
-      get :refresh
-    end
+  resources :feeds, only: [:index, :show] do
+    post :subscribe, on: :collection
+    get :refresh, on: :member
   end
   resources :items, only: [:show]
+  resources :groups, only: [:index]
 
   mount FeverAPI => '/api/fever'
 

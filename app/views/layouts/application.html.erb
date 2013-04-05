@@ -11,7 +11,11 @@
 </head>
 <body>
   <div id="container">
-    <header></header>
+    <header>
+    <% if alert -%>
+      <p><%= alert %></p>
+    <% end -%>
+    </header>
     <%= yield %>
   </div>
 </body>

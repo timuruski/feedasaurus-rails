@@ -15,16 +15,28 @@ class FeedsController < ApplicationController
     redirect_to :back
   end
 
+  def subscribe
+    feed = FeedSubscriber.build_feed(params[:feed_url])
+
+    if feed.exists?
+      flash[:alert] = "You are already subscribed to this feed."
+    end
+
+    unless feed.verify_url
+      flash[:alert] = "This URL is not a valid feed."
+    end
+
+    redirect_to action: :index
+  end
+
+  # Scaffoldingy kind of stuff.
+
   def new
     @feed = Feed.new
   end
 
   def create
-    @feed = Feed.new(params)
-    # Validate feed is XML
-    # Validate feed isn't a duplicate
-    # Handle multiple alternates
-    redirect_to action: :index
+    @feed = Feed.new(params[:feed])
   end
 
   def edit

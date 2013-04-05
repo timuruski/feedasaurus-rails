@@ -1,8 +1,8 @@
 <div id="feeds">
-  <%= form_for @new_feed, action: :create do |f| %>
+  <%= form_tag action: :subscribe do %>
   <p>
-    <%= f.text_field :url %>
-    <%= f.submit 'add' %>
+    <%= text_field_tag :feed_url, 'http://daringfireball.net/index.xml' %>
+    <%= submit_tag 'add' %>
   </p>
   <% end -%>
   <ul>
