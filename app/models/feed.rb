@@ -137,17 +137,16 @@ class Feed < ActiveRecord::Base
 
   # Immediately refreshes a feed.
   def refresh!
-    update_attribute(:refresh_started_at, Time.current)
+    current_time = Time.current
+    self.refresh_started_at = current_time
+    self.next_refresh_at = current_time.advance(seconds: refresh_every)
+    save
 
     if FeedRefresher.refresh(self)
-      current_time = Time.current
       self.last_refreshed_at = current_time
-      self.next_refresh_at = current_time.advance(seconds: refresh_every)
     end
 
     self.refresh_started_at = nil
-    # BUG If the feed fails to save for whatever reason, the
-    # next_refresh at isn't updated and the worker will churn.
     save
   end
 
