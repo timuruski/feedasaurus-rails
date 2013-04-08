@@ -16,15 +16,17 @@ class FeedsController < ApplicationController
   end
 
   def subscribe
-    feed = FeedSubscriber.build_feed(params[:feed_url])
+    feed = Feed.subscribe_to(params[:feed_url])
 
-    if feed.exists?
-      flash[:alert] = "You are already subscribed to this feed."
-    end
-
-    unless feed.verify_url
+    if feed.invalid?
       flash[:alert] = "This URL is not a valid feed."
+    elsif feed.exists?
+      flash[:alert] = "You are already subscribed to this feed."
+    else
+      flash[:notice] = feed.url
     end
+
+    # Need to get the feed name.
 
     redirect_to action: :index
   end

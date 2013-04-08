@@ -57,6 +57,14 @@ class Feed < ActiveRecord::Base
   scope :enabled, where(:enabled => true)
   scope :disabled, where(:enabled => false)
 
+  # Returns a new Feed based on a URL.
+  # If the URL is invalid, the feed's URL will be nil and it will not be
+  # a valid feed. If the URL was HTML with an alternate link, then that
+  # URL will be used.
+  def self.subscribe_to(url)
+    FeedSubscriber.new(url).feed
+  end
+
   # Returns a list of feeds to be refreshed.
   scope :refreshable, ->(as_of = Time.current) {
     enabled

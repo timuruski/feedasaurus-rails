@@ -12,9 +12,8 @@
 <body>
   <div id="container">
     <header>
-    <% if alert -%>
-      <p><%= alert %></p>
-    <% end -%>
+    <%= content_tag(:p, alert, :class => 'alert') if alert %>
+    <%= content_tag(:p, notice, :class => 'notice') if notice %>
     </header>
     <%= yield %>
   </div>
